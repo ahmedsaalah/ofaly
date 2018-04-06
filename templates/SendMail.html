@@ -1,0 +1,78 @@
+{% extends "base.html" %} {% block content %}
+
+<body class="yui-skin-sam">
+
+    <div class="wrapper">
+
+        <div class="main-panel">
+            <nav class="navbar navbar-transparent navbar-absolute">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                        <a class="navbar-brand" href="#">Send Mail</a>
+                    </div>
+
+                </div>
+            </nav>
+            <div class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header" data-background-color="red">
+                                    <h3 class="title">Send Mail</h3>
+
+
+
+                                </div>
+                                <div class="card-content">
+                                    <!-- <textarea id="TypeHere">Type some text here.</textarea> -->
+                                    <!-- <textarea id="NicEdit" cols="80" rows="5">Some Sample Text</textarea>
+                                    <textarea id="NotNicEdit" cols="80" rows="5">Some Sample Text</textarea>
+                                    <div id="NicEdit2">Some Sample Text</div> -->
+                                    <form action="{{url_for('sendmail')}}" method="POST">
+
+                                        <!-- <textarea name="msgpost" id="msgpost" cols="50" rows="10">
+                                                    <strong>Your</strong> HTML <em>code</em> goes here.<br>
+                                                    This text will be pre-loaded in the editor when it is rendered.
+                                                </textarea> -->
+                                        <input type="text" name="subject" placeholder="Subject" />
+                                        <textarea id="editor1" name="msgpost">
+                              
+                                                        </textarea>
+
+                                        <!-- 
+                                        <textarea name="dataMail" id="RichTextEdit" style=" height: 400px;" cols="100" rows="500"></textarea>
+                                        <textarea name="mail" cols="80" rows="20">
+                                                Some Sample Text
+                                                </textarea> -->
+
+                                        <button type="submit" class="btn btn-primary pull-right">Send</button>
+
+                                    </form>
+
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+
+
+<!--   Core JS Files   -->
+
+
+{% endblock %}
