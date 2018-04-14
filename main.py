@@ -8,7 +8,6 @@ ACCESS_SECRET = 'uLUpsT1hXEIIc8m34vmAFG81Ne08bwpJwQFsq49so2RJA'
 
 
 
-
 def UserDataTwitter(Id):
     auth = OAuthHandler(CONSUMER_KEY,CONSUMER_SECRET)
     api = tweepy.API(auth)
@@ -20,7 +19,7 @@ def UserDataTwitter(Id):
         user = api.lookup_users(user_ids=[Id])
 
     except:
-        return json.dumps({"error": "No user matches for this id"  })
+        return None
 
 
     dataDetails = user[0]
@@ -29,9 +28,6 @@ def UserDataTwitter(Id):
     return user        
 
 
-
-
-@app.route("/tweets/<Id>", methods=['POST','GET'])
 def UsertweetsTwitter(Id):
     auth = OAuthHandler(CONSUMER_KEY,CONSUMER_SECRET)
     api = tweepy.API(auth)
@@ -39,14 +35,22 @@ def UsertweetsTwitter(Id):
 
     #search
     api = tweepy.API(auth)
-   
-    try :   
+    try :  
         posts = api.user_timeline(id=Id, count = 25 ,include_rts = True)
-
     except:
-        return json.dumps({"error": "No user matches for this id"  })
-    return posts   
-    # return str(posts[0].text) +"   "+ str(posts[0].created_at) +"   "+ str(posts[0].id_str) +"   "+ str(posts[1].id_str)  
+        return None
+    tweets = []
+    for tweet in posts:
+        tweets.append(tweet._json)
+    return tweets
+
+
+@app.route("/tweets/<Id>", methods=['POST','GET'])
+def getTweets(Id):
+    tweets =UsertweetsTwitter(Id)
+    if tweets:
+        return json.dumps(tweets)
+    return json.dumps({"error": "No user matches for this id"  })
 
 
 '''   it  scrap user data and save to DB '''
@@ -59,21 +63,17 @@ def UserData(twId):
     else :
         local = True
         userData = getByTwID(twId) 
-
+        
         if userData is None :
             return  json.dumps({"error": "User not exist in the Database"  })
         else :
             return  json.dumps({"name": userData.name , "picture" :userData.picture , "tw_id" :userData.tw_id }, sort_keys=True,
                    indent=4, separators=(',', ': '))            
 
-
-   
     user = UserDataTwitter(twId)
+    if not user:
+        return json.dumps({"error": "No user matches for this id"  })
     
-
-
- 
-
     userObj = CheckIfexist(user)
     return json.dumps({"name": userObj.name , "picture" :userObj.picture , "tw_id" :userObj.tw_id  }, indent=4 ,separators=(',', ': '))
 
@@ -93,15 +93,10 @@ def getposts(accID):
         else :
             return  printTweets(tweets,accID)          
 
-
-   
     tweetsnew = UsertweetsTwitter(accID)
-    
-
-
- 
 
     tweets = CheckIfTweetsExist(tweetsnew,accID)
+    
     return printTweets(tweets,accID)
 
 def printTweets(tweets,accID):
@@ -109,10 +104,7 @@ def printTweets(tweets,accID):
     i=0
     # print(str(tweets))
     for tweet in tweets:
-
-    
-        post = posts( acc_id= accID, tw_id=tweet.id_str ,message=tweet.text ,createdTime=tweet.created_at)
-
+        post = posts( acc_id= accID, tw_id=tweet['id_str'] ,message=tweet['text'] ,createdTime=tweet['created_at'])
         json_Data.append(str(post))
 
     return json.dumps(json_Data)
@@ -139,8 +131,8 @@ def getTweetsByID(accID):
 def Addtweets(tweets,accID):
     i=0
     for tweet in tweets:
-
-        post = posts( acc_id= accID, tw_id=tweet.id_str ,message=tweet.text ,createdTime=tweet.created_at)
+        print tweet
+        post = posts( acc_id= accID, tw_id=tweet['id_str'] ,message=tweet['text'] ,createdTime=tweet['created_at'])
         db.session.add(post)
         db.session.commit()
         print(i)
@@ -149,7 +141,7 @@ def Addtweets(tweets,accID):
     return tweets
 def UpdateTweets(tweetsdb,tweets):
     i=0
-    if tweetsdb[0].tw_id == tweets[0].id_str:
+    if tweetsdb[0].tw_id == tweets[0]['id_str']:
         return tweets
     else :
         for tweet in tweetsdb:
