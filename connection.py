@@ -21,13 +21,13 @@ from tweepy import OAuthHandler
 
 
 app =Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/Ofaaly'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/ofaaly'
 
 db = SQLAlchemy(app)
 
 class users(db.Model):
    id = db.Column('id', db.Integer, primary_key = True)
-   tw_id = db.Column(db.Integer)
+   tw_id = db.Column(db.String(70))
    name = db.Column(db.String(100))  
    picture = db.Column(db.String(512))
 
@@ -41,8 +41,8 @@ class users(db.Model):
 
 class posts(db.Model):
    id = db.Column('id', db.Integer, primary_key = True)
-   tw_id = db.Column(db.Integer)
-   acc_id = db.Column(db.Integer)
+   tw_id = db.Column(db.String(70))
+   acc_id = db.Column(db.String(70))
    message = db.Column(db.String(512))
    createdTime = db.Column(db.String(70))
 
