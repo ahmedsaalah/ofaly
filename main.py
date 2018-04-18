@@ -45,7 +45,7 @@ def UsertweetsTwitter(Id):
     return tweets
 
 
-@app.route("/tweets/<Id>", methods=['POST','GET'])
+
 def getTweets(Id):
     tweets =UsertweetsTwitter(Id)
     if tweets:
